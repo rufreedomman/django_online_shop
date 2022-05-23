@@ -1,6 +1,12 @@
+from io import BytesIO
+
+from django.conf import settings
+from django.core.mail import EmailMessage
 from django.shortcuts import get_object_or_404, redirect, render
+from django.template.loader import render_to_string
 
 import braintree
+import weasyprint
 from orders.models import Order
 
 
@@ -25,6 +31,30 @@ def payment_process(request):
             # store the unique transaction id
             order.braintree_id = result.transaction.id
             order.save()
+
+            # create invoice e-mail
+            subject = 'My Shop - Счет № {}'.format(order.id)
+            message = 'Пожалуйста, найдите прикрепленный счет за вашу ' \
+                      'недавнюю покупку.'
+            email = EmailMessage(subject,
+                                 message,
+                                 'admin@myshop.com',
+                                 [order.email])
+
+            # generate PDF
+            html = render_to_string('orders/order/pdf.html', {'order': order})
+            out = BytesIO()
+            stylesheets = [
+                weasyprint.CSS(settings.STATIC_ROOT + 'css/pdf.css')]
+            weasyprint.HTML(string=html).write_pdf(out,
+                                                   stylesheets=stylesheets)
+            # attach PDF file
+            email.attach('order_{}.pdf'.format(order.id),
+                         out.getvalue(),
+                         'application/pdf')
+            # send e-mail
+            email.send()
+
             return redirect('payment:done')
         else:
             return redirect('payment:canceled')

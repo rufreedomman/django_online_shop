@@ -1,13 +1,16 @@
 {% extends "shop/base.html" %}
+{% load i18n %}
 
-{% block title %}Спасибо!{% endblock title %}
+{% block title %}{% translate 'Thank you' %}{% endblock title %}
 
 {% block content %}
-<h1>Спасибо!</h1>
-<p>
-  Ваш заказ успешно оформлен. Номер заказа - <strong>{{ order.id }}</strong>
-</p>
+<h1>{% translate 'Thank you' %}</h1>
+  {% blocktranslate with order_id=order.id %}
+    <p>Your order has been successfully completed. Your order number is
+      <strong>{{ order_id }}</strong>.
+    </p>
+  {% endblocktranslate %}
 <small class="text-muted ml-2">
-  <a href="{% url 'shop:product_list' %}">На главную</a>
+  <a href="{% url 'shop:product_list' %}">{% translate 'Home page' %}</a>
 </small>
 {% endblock content %}

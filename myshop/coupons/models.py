@@ -12,9 +12,9 @@ class Coupon(models.Model):
                     MaxValueValidator(100)])
     active = models.BooleanField()
 
-    class Meta:
-        verbose_name = 'Купон'
-        verbose_name_plural = 'Купоны'
+    # class Meta:
+    #     verbose_name = 'Купон'
+    #     verbose_name_plural = 'Купоны'
 
     def __str__(self):
         return self.code

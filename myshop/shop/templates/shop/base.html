@@ -36,8 +36,8 @@
         {% if cart|length > 0 %}
           {% translate "Your cart" %}:
           <a href="{% url 'cart:cart_detail' %}">
-            {% blocktranslate with total_items_plural=total_items|ru_pluralize total_price=cart.get_total_price %}
-              {{ total_items }} {{ total_items_plural }}, {{ total_price }}
+            {% blocktranslate with total_items_plural=total_items|pluralize total_price=cart.get_total_price %}
+              {{ total_items }} item{{ total_items_plural }}, {{ total_price }}
             {% endblocktranslate %}
           </a>
         {% else %}
